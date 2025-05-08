@@ -1,13 +1,9 @@
 package com.example.anti_fraud.domains;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Value;
 
-@Getter
-@Setter
-@AllArgsConstructor
-public class Transaction {
+@Value
+public class TransactionModel {
   private String id;
   private String userId;
   private int value;

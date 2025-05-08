@@ -1,23 +1,25 @@
 package com.example.anti_fraud.usecases;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.anti_fraud.domains.Transaction;
+import com.example.anti_fraud.domains.TransactionModel;
 import com.example.anti_fraud.domains.TransactionStatus;
 import com.example.anti_fraud.dtos.TransactionDTO;
 import com.example.anti_fraud.exceptions.TransactionAlreadyExitsException;
-import com.example.anti_fraud.repositories.TransactionInMemoryRepository;
+import com.example.anti_fraud.repositories.ITransactionRepository;
 
 @Service
 public class AnalyzeTransactionUseCase {
   @Autowired
-  TransactionInMemoryRepository transactionInMemoryRepository;
+  ITransactionRepository transactionRepository;
 
   public TransactionStatus execute(TransactionDTO data) {
 
     
-    Transaction transactionAlreadyExists = transactionInMemoryRepository.findById(data.getId());
+    Optional<TransactionModel> transactionAlreadyExists = transactionRepository.findById(data.getId());
     if (transactionAlreadyExists != null) {
       throw new TransactionAlreadyExitsException("Transação já foi analisada");
     }
@@ -30,8 +32,8 @@ public class AnalyzeTransactionUseCase {
       status = TransactionStatus.APPROVED;
     }
 
-    Transaction transaction = new Transaction(data.getId(), data.getUserId(), data.getValue(), status);
-    transactionInMemoryRepository.save(transaction);
+    TransactionModel transaction = new TransactionModel(data.getId(), data.getUserId(), data.getValue(), status);
+    transactionRepository.save(transaction);
 
     return status;
   }
